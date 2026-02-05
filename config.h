@@ -6,7 +6,7 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
+static const char dmenufont[]       = "FontAwesomeNerdFont-12";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
@@ -58,12 +58,26 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "alacritty", NULL };
+static const char *dmenucmd[]				    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,  
+																			      "-l", "15", "-i", "-p", "Bin:",
+																			      "-nb", "#002b36" ,"-nf", "#9899a0", "-sb", "#586e75" ,"-sf", "#E5E9F0",
+																			      NULL };
+static const char *dmenudesktopcmd[]    = { "dmenu-desktop.sh", "-m", dmenumon, "-fn", dmenufont,  
+																			      "-l", "15", "-i", "-p", "Software:",
+																			      "-nb", "#002b36" ,"-nf", "#9899a0", "-sb", "#586e75" ,"-sf", "#E5E9F0",
+																			      NULL };
+// TODO: Set font via command line:
+static const char *dmenufilecmd[]       = { "dmenu-find-file.sh", "-m", dmenumon, NULL };
+static const char *dmenufilehiddencmd[] = { "dmenu-find-hidden-file.sh", "-m", dmenumon, NULL };
+
+static const char *termcmd[]            = { "sensible-terminal.sh", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_g,      spawn,          {.v = dmenudesktopcmd } },
+	{ MODKEY,                       XK_o,      spawn,          {.v = dmenufilecmd } },
+	{ MODKEY|ShiftMask,             XK_o,      spawn,          {.v = dmenufilehiddencmd } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
