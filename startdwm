@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Network Manager
+nm-applet &
+
+# Start bluetooth applet
+blueman-applet &
+
+# Start printer applet
+system-config-printer-applet &
+
+# Start PulseAudio
+pulseaudio --start &
+
+# Start low battery notification
+battery-popup.sh -L 15 -n -s ~/mydotfiles/battery-popup.wav -v 75 &
+
+# Start gcalcli reminding
+gcalcli-reminder.sh &
+
+# Start mail syncing
+"$HOME"/.config/neomutt/mailsync.sh &
+
+exec dwm

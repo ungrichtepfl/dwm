@@ -33,13 +33,20 @@ dist: clean
 install: all
 	mkdir -p ${DESTDIR}${PREFIX}/bin
 	cp -f dwm ${DESTDIR}${PREFIX}/bin
+	cp -f startdwm ${DESTDIR}${PREFIX}/bin
 	chmod 755 ${DESTDIR}${PREFIX}/bin/dwm
+	chmod 755 ${DESTDIR}${PREFIX}/bin/startdwm
 	mkdir -p ${DESTDIR}${MANPREFIX}/man1
 	sed "s/VERSION/${VERSION}/g" < dwm.1 > ${DESTDIR}${MANPREFIX}/man1/dwm.1
 	chmod 644 ${DESTDIR}${MANPREFIX}/man1/dwm.1
+	mkdir -p ${DESTDIR}${DESKTOPPREFIX}
+	cp -f dwm.desktop ${DESTDIR}${DESKTOPPREFIX}
+	chmod 644 ${DESTDIR}${DESKTOPPREFIX}/dwm.desktop
 
 uninstall:
 	rm -f ${DESTDIR}${PREFIX}/bin/dwm\
-		${DESTDIR}${MANPREFIX}/man1/dwm.1
+		${DESTDIR}${PREFIX}/bin/startdwm\
+		${DESTDIR}${MANPREFIX}/man1/dwm.1\
+    ${DESTDIR}${DESKTOPPREFIX}/dwm.desktop
 
 .PHONY: all clean dist install uninstall
