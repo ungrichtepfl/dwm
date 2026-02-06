@@ -88,6 +88,7 @@ static const char *dmenufilecmd[]       = { "dmenu-find-file.sh", "-m", dmenumon
 static const char *dmenuhiddenfilecmd[] = { "dmenu-find-hidden-file.sh", "-m", dmenumon, NULL };
 
 static const char *termcmd[]            = { "sensible-terminal.sh", NULL };
+static const char *browsercmd[]         = { "flatpak", "run", "com.brave.Browser", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key           function        argument */
@@ -96,11 +97,12 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_o,         spawn,          {.v = dmenufilecmd } },
 	{ MODKEY|ShiftMask,             XK_o,         spawn,          {.v = dmenuhiddenfilecmd } },
 	{ MODKEY,                       XK_Return,    spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_i,         spawn,          {.v = browsercmd } },
 	{ MODKEY,                       XK_b,         togglebar,      {0} },
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,         focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,         incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,         incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_i,         incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_d,         incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,         setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,         setmfact,       {.f = +0.05} },
 	{ MODKEY|ShiftMask,             XK_Return,    zoom,           {0} },
