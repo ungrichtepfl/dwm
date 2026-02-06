@@ -21,4 +21,7 @@ gcalcli-reminder.sh &
 # Start mail syncing
 "$HOME"/.config/neomutt/mailsync.sh &
 
+export STATUSBAR=dwmblocks
+dwmblocks &
+
 exec dwm

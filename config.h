@@ -75,6 +75,8 @@ static const Layout layouts[] = {
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
+#define STATUSBAR "dwmblocks"
+
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 #define dmenu_common_flags "-m", dmenumon, "-fn", dmenufont, "-l", "15", "-i", "-nb", col_dmenu_nb ,"-nf", col_dmenu_nf, "-sb", col_dmenu_sb ,"-sf", col_dmenu_sf
@@ -95,9 +97,10 @@ static const char *toggleaudiocmd[]       = { "toggle-sink.sh", NULL };
 static const char *popnotificationcmd[]   = { "dunstctl", "history-pop", NULL };
 static const char *closenotificationcmd[] = { "dunstctl", "close-all", NULL };
 
-static const char *upvolumecmd[]          = { "pactl", "set-sink-volume", "@DEFAULT_SINK@",   "+5%",    NULL };
-static const char *downvolumecmd[]        = { "pactl", "set-sink-volume", "@DEFAULT_SINK@",   "-5%",    NULL };
-static const char *mutevolumecmd[]        = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@",   "toggle", NULL };
+#define PACTL(cmd, arg) SHCMD("pactl " cmd " @DEFAULT_SINK@ " arg "; pkill -RTMIN+7 $STATUSBAR")
+#define            upvolumecmd              PACTL("set-sink-volume", "+5%")
+#define            downvolumecmd            PACTL("set-sink-volume", "-5%")
+#define            mutevolumecmd            PACTL("set-sink-mute", "toggle")
 static const char *mutemiccmd[]           = { "pactl", "set-sink-mute",   "@DEFAULT_SOURCE@", "toggle", NULL };
 
 static const char *brightercmd[]          = { "brightnessctl", "set", "5%+", NULL };
@@ -127,10 +130,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_n,                     spawn,          {.v = popnotificationcmd } },
 	{ MODKEY|ShiftMask,             XK_n,                     spawn,          {.v = closenotificationcmd } },
 	{ MODKEY,                       XK_Escape,                spawn,          {.v = lockcmd } },
-  { 0,                            XF86XK_AudioMute,         spawn,          {.v = mutevolumecmd } },
+  { 0,                            XF86XK_AudioMute,         spawn,          mutevolumecmd  },
   { 0,                            XF86XK_AudioMicMute,      spawn,          {.v = mutemiccmd } },
-  { 0,                            XF86XK_AudioLowerVolume,  spawn,          {.v = downvolumecmd } },
-	{ 0,                            XF86XK_AudioRaiseVolume,  spawn,          {.v = upvolumecmd } },
+  { 0,                            XF86XK_AudioLowerVolume,  spawn,          downvolumecmd  },
+	{ 0,                            XF86XK_AudioRaiseVolume,  spawn,          upvolumecmd  },
   { 0,                            XF86XK_MonBrightnessDown, spawn,          {.v = dimmercmd } },
   { 0,                            XF86XK_MonBrightnessUp,   spawn,          {.v = brightercmd } },
 	{ 0,                            XK_Print,                 spawn,          screenshotcmd },
@@ -179,7 +182,15 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
+	{ ClkStatusText,        0,              Button1,        sigstatusbar,   {.i = 1} },
+	{ ClkStatusText,        0,              Button2,        sigstatusbar,   {.i = 2} },
+	{ ClkStatusText,        0,              Button3,        sigstatusbar,   {.i = 3} },
+	{ ClkStatusText,        0,              Button4,        sigstatusbar,   {.i = 4} },
+	{ ClkStatusText,        0,              Button5,        sigstatusbar,   {.i = 5} },
+	{ ClkStatusText,        0,              6,              sigstatusbar,   {.i = 6} },
+	{ ClkStatusText,        0,              7,              sigstatusbar,   {.i = 7} },
+	{ ClkStatusText,        0,              8,              sigstatusbar,   {.i = 8} },
+	{ ClkStatusText,        0,              9,              sigstatusbar,   {.i = 9} },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
