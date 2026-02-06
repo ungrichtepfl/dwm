@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx			 =  1;        /* border pixel of windows */
 static const unsigned int snap           = 32;        /* snap pixel */
@@ -12,7 +14,7 @@ static const int showbar                 =  1;        /* 0 means no bar */
 static const int topbar                  =  1;        /* 0 means bottom bar */
 
 static const char default_font[]    = "FontAwesomeNerdFont-12";
-static const char *fonts[]          = {default_font, "monospace:size=12" };
+static const char *fonts[]          = { default_font, "monospace:size=12" };
 #define					  dmenufont           default_font
 
 static const char col_gray1[]       = "#222222";
@@ -63,7 +65,7 @@ static const Layout layouts[] = {
 };
 
 /* key definitions */
-#define MODKEY Mod4Mask // Use Window key
+#define MODKEY Mod4Mask // Use Windows key
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -75,62 +77,99 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[]				    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,  
-																			      "-l", "15", "-i", "-p", "Bin:",
-																			      "-nb", col_dmenu_nb ,"-nf", col_dmenu_nf, "-sb", col_dmenu_sb ,"-sf", col_dmenu_sf,
-																			      NULL };
-static const char *dmenudesktopcmd[]    = { "dmenu-desktop.sh", "-m", dmenumon, "-fn", dmenufont,  
-																			      "-l", "15", "-i", "-p", "Software:",
-																			      "-nb", col_dmenu_nb ,"-nf", col_dmenu_nf, "-sb", col_dmenu_sb ,"-sf", col_dmenu_sf,
-																			      NULL };
-// TODO: Set font via command line:
-static const char *dmenufilecmd[]       = { "dmenu-find-file.sh", "-m", dmenumon, NULL };
-static const char *dmenuhiddenfilecmd[] = { "dmenu-find-hidden-file.sh", "-m", dmenumon, NULL };
+#define dmenu_common_flags "-m", dmenumon, "-fn", dmenufont, "-l", "15", "-i", "-nb", col_dmenu_nb ,"-nf", col_dmenu_nf, "-sb", col_dmenu_sb ,"-sf", col_dmenu_sf
+static const char *dmenucmd[]				      = { "dmenu_run",                 dmenu_common_flags, "-p", "Bin:", NULL };
+static const char *dmenudesktopcmd[]      = { "dmenu-desktop.sh",          dmenu_common_flags, "-p", "Software:", NULL };
+static const char *dmenufilecmd[]         = { "dmenu-find-file.sh",        dmenu_common_flags, "-p", "File:", NULL };
+static const char *dmenuhiddenfilecmd[]   = { "dmenu-find-hidden-file.sh", dmenu_common_flags, "-p", "File:", NULL };
 
-static const char *termcmd[]            = { "sensible-terminal.sh", NULL };
-static const char *browsercmd[]         = { "flatpak", "run", "com.brave.Browser", NULL };
+static const char *termcmd[]              = { "sensible-terminal.sh", NULL };
+static const char *browsercmd[]           = { "flatpak", "run", "com.brave.Browser", NULL };
+
+static const char *mailcmd[]              = { "sensible-terminal.sh", "-e", "neomutt_wrapper.sh", NULL };
+static const char *whatsappcmd[]          = { "flatpak", "run", "com.rtosta.zapzap", NULL };
+static const char *telegramcmd[]          = { "flatpak", "run", "org.telegram.desktop", NULL };
+static const char *fileexplorercmd[]      = { "thunar", NULL };
+static const char *lockcmd[]              = { "lock.sh", NULL };
+static const char *toggleaudiocmd[]       = { "toggle-sink.sh", NULL };
+static const char *popnotificationcmd[]   = { "dunstctl", "history-pop", NULL };
+static const char *closenotificationcmd[] = { "dunstctl", "close-all", NULL };
+
+static const char *upvolumecmd[]          = { "pactl", "set-sink-volume", "@DEFAULT_SINK@",   "+5%",    NULL };
+static const char *downvolumecmd[]        = { "pactl", "set-sink-volume", "@DEFAULT_SINK@",   "-5%",    NULL };
+static const char *mutevolumecmd[]        = { "pactl", "set-sink-mute",   "@DEFAULT_SINK@",   "toggle", NULL };
+static const char *mutemiccmd[]           = { "pactl", "set-sink-mute",   "@DEFAULT_SOURCE@", "toggle", NULL };
+
+static const char *brightercmd[]          = { "brightnessctl", "set", "5%+", NULL };
+static const char *dimmercmd[]            = { "brightnessctl", "set", "5%-", NULL };
+
+#define screenshot_path							    "$HOME/Pictures/Screenshots/"
+#define screenshot_file							    screenshot_path"$(date +%Y-%m-%dT%H-%M-%S).png"
+#define create_screenshot_path          "mkdir -p "screenshot_path" && "
+#define screenshotcmd								    SHCMD(create_screenshot_path"maim " screenshot_file)
+#define screenshotselectcmd					    SHCMD(create_screenshot_path"maim --select " screenshot_file)
+#define screenshotclipboardcmd          SHCMD("maim | xclip -selection clipboard -t image/png")
+#define screenshotselectsclipboardcmd   SHCMD("maim --select | xclip -selection clipboard -t image/png")
 
 static const Key keys[] = {
-	/* modifier                     key           function        argument */
-	{ MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_g,         spawn,          {.v = dmenudesktopcmd } },
-	{ MODKEY,                       XK_o,         spawn,          {.v = dmenufilecmd } },
-	{ MODKEY|ShiftMask,             XK_o,         spawn,          {.v = dmenuhiddenfilecmd } },
-	{ MODKEY,                       XK_Return,    spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_i,         spawn,          {.v = browsercmd } },
-	{ MODKEY,                       XK_b,         togglebar,      {0} },
-	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,         focusstack,     {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_i,         incnmaster,     {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_d,         incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,         setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,         setmfact,       {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_Return,    zoom,           {0} },
-	{ MODKEY,                       XK_Tab,       view,           {0} },
-	{ MODKEY|ShiftMask,             XK_q,         killclient,     {0} },
-	{ MODKEY,                       XK_t,         setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,         setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,         setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,     setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,     togglefloating, {0} },
-	{ MODKEY,                       XK_0,         view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,         tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,     focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period,    focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period,    tagmon,         {.i = +1 } },
-	TAGKEYS(                        XK_1,                          0)
-	TAGKEYS(                        XK_2,                          1)
-	TAGKEYS(                        XK_3,                          2)
-	TAGKEYS(                        XK_4,                          3)
-	TAGKEYS(                        XK_5,                          4)
-	TAGKEYS(                        XK_6,                          5)
-	TAGKEYS(                        XK_7,                          6)
-	TAGKEYS(                        XK_8,                          7)
-	TAGKEYS(                        XK_9,                          8)
-	{ MODKEY|ShiftMask,             XK_BackSpace, quit,           {0} },  // Terminates dwm
-	{ MODKEY|ShiftMask,             XK_r,         quit,           {1} },  // Restarts dwm
-	{ MODKEY,                       XK_s,         togglesticky,   {0} },
+	/* modifier                     key                       function        argument */
+	{ MODKEY,                       XK_p,                     spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_g,                     spawn,          {.v = dmenudesktopcmd } },
+	{ MODKEY,                       XK_o,                     spawn,          {.v = dmenufilecmd } },
+	{ MODKEY|ShiftMask,             XK_o,                     spawn,          {.v = dmenuhiddenfilecmd } },
+	{ MODKEY,                       XK_Return,                spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_i,                     spawn,          {.v = browsercmd } },
+	{ MODKEY,                       XK_m,                     spawn,          {.v = mailcmd } },
+	{ MODKEY,                       XK_t,                     spawn,          {.v = whatsappcmd } },
+	{ MODKEY|ShiftMask,             XK_t,                     spawn,          {.v = telegramcmd } },
+	{ MODKEY,                       XK_y,                     spawn,          {.v = fileexplorercmd } },
+	{ MODKEY,                       XK_a,                     spawn,          {.v = toggleaudiocmd } },
+	{ MODKEY,                       XK_n,                     spawn,          {.v = popnotificationcmd } },
+	{ MODKEY|ShiftMask,             XK_n,                     spawn,          {.v = closenotificationcmd } },
+	{ MODKEY,                       XK_Escape,                spawn,          {.v = lockcmd } },
+  { 0,                            XF86XK_AudioMute,         spawn,          {.v = mutevolumecmd } },
+  { 0,                            XF86XK_AudioMicMute,      spawn,          {.v = mutemiccmd } },
+  { 0,                            XF86XK_AudioLowerVolume,  spawn,          {.v = downvolumecmd } },
+	{ 0,                            XF86XK_AudioRaiseVolume,  spawn,          {.v = upvolumecmd } },
+  { 0,                            XF86XK_MonBrightnessDown, spawn,          {.v = dimmercmd } },
+  { 0,                            XF86XK_MonBrightnessUp,   spawn,          {.v = brightercmd } },
+	{ 0,                            XK_Print,                 spawn,          screenshotcmd },
+	{ ShiftMask,                    XK_Print,                 spawn,          screenshotselectcmd },
+	{ ControlMask,                  XK_Print,                 spawn,          screenshotclipboardcmd },
+	{ ControlMask|ShiftMask,        XK_Print,                 spawn,          screenshotselectsclipboardcmd },
+	{ MODKEY,                       XK_b,                     togglebar,      {0} },
+	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_i,                     incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_d,                     incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_h,                     setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_l,                     setmfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,             XK_Return,                zoom,           {0} },
+	{ MODKEY,                       XK_Tab,                   view,           {0} },
+	{ MODKEY|ShiftMask,             XK_q,                     killclient,     {0} },
+	{ MODKEY,                       XK_e,                     setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                       XK_f,                     setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_w,                     setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_space,                 setlayout,      {0} },
+	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
+	{ MODKEY,                       XK_0,                     view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_0,                     tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_comma,                 focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period,                focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period,                tagmon,         {.i = +1 } },
+	TAGKEYS(                        XK_1,                                      0)
+	TAGKEYS(                        XK_2,                                      1)
+	TAGKEYS(                        XK_3,                                      2)
+	TAGKEYS(                        XK_4,                                      3)
+	TAGKEYS(                        XK_5,                                      4)
+	TAGKEYS(                        XK_6,                                      5)
+	TAGKEYS(                        XK_7,                                      6)
+	TAGKEYS(                        XK_8,                                      7)
+	TAGKEYS(                        XK_9,                                      8)
+	{ MODKEY|ShiftMask,             XK_BackSpace,             quit,           {0} },  // Terminates dwm
+	{ MODKEY|ShiftMask,             XK_r,                     quit,           {1} },  // Restarts dwm
+	{ MODKEY,                       XK_s,                     togglesticky,   {0} },
 };
 
 /* button definitions */
