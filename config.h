@@ -19,6 +19,10 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#005577";
+static const char col_dmenu_sf[]    = "#E5E9F0";
+static const char col_dmenu_sb[]    = "#586e75";
+static const char col_dmenu_nf[]    = "#9899a0";
+static const char col_dmenu_nb[]    = "#002b36";
 static const char *colors[][3]      = {
 	/*                   fg         bg         border   */
 	[SchemeNorm    ] = { col_gray3, col_gray1, col_gray2  },
@@ -72,15 +76,15 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]				    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,  
 																			      "-l", "15", "-i", "-p", "Bin:",
-																			      "-nb", "#002b36" ,"-nf", "#9899a0", "-sb", "#586e75" ,"-sf", "#E5E9F0",
+																			      "-nb", col_dmenu_nb ,"-nf", col_dmenu_nf, "-sb", col_dmenu_sb ,"-sf", col_dmenu_sf,
 																			      NULL };
 static const char *dmenudesktopcmd[]    = { "dmenu-desktop.sh", "-m", dmenumon, "-fn", dmenufont,  
 																			      "-l", "15", "-i", "-p", "Software:",
-																			      "-nb", "#002b36" ,"-nf", "#9899a0", "-sb", "#586e75" ,"-sf", "#E5E9F0",
+																			      "-nb", col_dmenu_nb ,"-nf", col_dmenu_nf, "-sb", col_dmenu_sb ,"-sf", col_dmenu_sf,
 																			      NULL };
 // TODO: Set font via command line:
 static const char *dmenufilecmd[]       = { "dmenu-find-file.sh", "-m", dmenumon, NULL };
-static const char *dmenufilehiddencmd[] = { "dmenu-find-hidden-file.sh", "-m", dmenumon, NULL };
+static const char *dmenuhiddenfilecmd[] = { "dmenu-find-hidden-file.sh", "-m", dmenumon, NULL };
 
 static const char *termcmd[]            = { "sensible-terminal.sh", NULL };
 
@@ -89,7 +93,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_g,      spawn,          {.v = dmenudesktopcmd } },
 	{ MODKEY,                       XK_o,      spawn,          {.v = dmenufilecmd } },
-	{ MODKEY|ShiftMask,             XK_o,      spawn,          {.v = dmenufilehiddencmd } },
+	{ MODKEY|ShiftMask,             XK_o,      spawn,          {.v = dmenuhiddenfilecmd } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
