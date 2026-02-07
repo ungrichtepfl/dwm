@@ -97,7 +97,7 @@ static const char *toggleaudiocmd[]       = { "toggle-sink.sh", NULL };
 static const char *popnotificationcmd[]   = { "dunstctl", "history-pop", NULL };
 static const char *closenotificationcmd[] = { "dunstctl", "close-all", NULL };
 
-#define PACTL(cmd, arg) SHCMD("pactl " cmd " @DEFAULT_SINK@ " arg "; pkill -RTMIN+8 $STATUSBAR")
+#define PACTL(cmd, arg) SHCMD("pactl " cmd " @DEFAULT_SINK@ " arg "; pkill -RTMIN+3 $STATUSBAR")
 #define            upvolumecmd              PACTL("set-sink-volume", "+5%")
 #define            downvolumecmd            PACTL("set-sink-volume", "-5%")
 #define            mutevolumecmd            PACTL("set-sink-mute", "toggle")
