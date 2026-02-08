@@ -71,7 +71,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeInfoSel, SchemeInfoNorm }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStatus, SchemeTagsSel, SchemeTagsNorm, SchemeTabsSel, SchemeTabsNorm, SchemeInfoSel, SchemeInfoNorm }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetWMSticky, NetActiveWindow, NetWMWindowType,
@@ -1085,7 +1085,7 @@ drawtab(Monitor *m) {
 	  /* add the remainder to the last tab so there is no leftover space left*/
 	  if(remainder && i == m->ntabs - 1) m->tab_widths[i] += remainder;
 	  w = m->tab_widths[i];
-	  drw_setscheme(drw, scheme[(c == m->sel) ? SchemeSel : SchemeNorm]);
+	  drw_setscheme(drw, scheme[(c == m->sel) ? SchemeTabsSel : SchemeTabsNorm]);
 	  tm = (m->tab_widths[i] - (int)TEXTW(c->name)) / 2;
 	  tm = (int)TEXTW(c->name) >= m->tab_widths[i] ? lrpad / 2 : tm;
 	  drw_text(drw, x, 0, w, th, tm, c->name, 0);
@@ -1093,7 +1093,7 @@ drawtab(Monitor *m) {
 	  ++i;
 	}
 
-	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_setscheme(drw, scheme[SchemeTabsNorm]);
 	drw_map(drw, m->tabwin, 0, 0, m->mw, th);
 }
 
