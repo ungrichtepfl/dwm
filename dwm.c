@@ -281,6 +281,7 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
+static void swapmon(const Arg *arg);
 
 /* variables */
 static Systray *systray = NULL;
@@ -2884,6 +2885,39 @@ zoom(const Arg *arg)
 		return;
 	pop(c);
 }
+
+void
+swapmon(const Arg *arg)
+{
+    if (mons->next == NULL)
+        return;
+
+    Monitor *m1 = mons;
+    Monitor *m2 = mons->next;
+
+    unsigned int tmp = m1->tagset[m1->seltags];
+    m1->tagset[m1->seltags] = m2->tagset[m2->seltags];
+    m2->tagset[m2->seltags] = tmp;
+
+    Client *c;
+    for (c = m1->clients; c; c = c->next)
+        c->mon = m2;
+    for (c = m2->clients; c; c = c->next)
+        c->mon = m1;
+
+    Client *tmp_clients = m1->clients;
+    m1->clients = m2->clients;
+    m2->clients = tmp_clients;
+
+    Client *tmp_stack = m1->stack;
+    m1->stack = m2->stack;
+    m2->stack = tmp_stack;
+
+    focus(NULL);
+    arrange(m1);
+    arrange(m2);
+}
+
 
 int
 main(int argc, char *argv[])
