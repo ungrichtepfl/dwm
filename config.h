@@ -12,6 +12,12 @@ static const int systraypinningfailfirst =  1;        /* 1: if pinning fails, di
 static const int showsystray             =  1;        /* 0 means no systray */
 static const int showbar                 =  1;        /* 0 means no bar */
 static const int topbar                  =  1;        /* 0 means bottom bar */
+/*  Display modes of the tab bar: never shown, always shown, shown only in  */
+/*  monocle mode in the presence of several windows.                        */
+/*  Modes after showtab_nmodes are disabled.                                */
+enum showtab_modes { showtab_never, showtab_auto, showtab_nmodes, showtab_always};
+static const int showtab			           = showtab_auto;        /* Default tab bar show mode */
+static const int toptab				           = 1;                   /* 0 means bottom tab bar */
 
 static const char default_font[]    = "FontAwesomeNerdFont-12";
 static const char *fonts[]          = { default_font, "monospace:size=12" };
@@ -141,6 +147,7 @@ static const Key keys[] = {
 	{ ControlMask,                  XK_Print,                 spawn,          screenshotclipboardcmd },
 	{ ControlMask|ShiftMask,        XK_Print,                 spawn,          screenshotselectsclipboardcmd },
 	{ MODKEY,                       XK_b,                     togglebar,      {0} },
+	{ MODKEY|ShiftMask,             XK_w,											tabmode,        {-1} },
 	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_i,                     incnmaster,     {.i = +1 } },
@@ -198,5 +205,6 @@ static const Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+	{ ClkTabBar,            0,              Button1,        focuswin,       {0} },
 };
 
