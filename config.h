@@ -124,6 +124,7 @@ static const char *dimmercmd[]            = { "brightnessctl", "set", "5%-", NUL
 
 // Cal
 static const char* calcmd[]           = { "cal-notify.sh", NULL };
+static const char* calweekcmd[]       = { "cal-notify.sh", "week", NULL };
 
 // Jira
 #define jiracmd                         SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh")
@@ -157,6 +158,7 @@ static const Key keys[] = {
 	{ ControlMask,                  XK_Print,                 spawn,          screenshotclipboardcmd },
 	{ ControlMask|ShiftMask,        XK_Print,                 spawn,          screenshotselectsclipboardcmd },
 	{ MODKEY,                       XK_c,                     spawn,          {.v = calcmd } },
+	{ MODKEY|ShiftMask,             XK_c,                     spawn,          {.v = calweekcmd } },
 	{ MODKEY,                       XK_p,                     spawn,          jiracmd },
 	{ MODKEY|ShiftMask,             XK_p,                     spawn,          jirasearchcmd },
 	{ MODKEY|ControlMask,           XK_p,                     spawn,          jiraallcmd },
