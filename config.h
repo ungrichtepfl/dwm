@@ -122,9 +122,17 @@ static const char *dimmercmd[]            = { "brightnessctl", "set", "5%-", NUL
 #define screenshotclipboardcmd          SHCMD("maim | xclip -selection clipboard -t image/png")
 #define screenshotselectsclipboardcmd   SHCMD("maim --select | xclip -selection clipboard -t image/png")
 
+// Cal
+static const char* calcmd[]           = { "cal-notify.sh", NULL };
+
+// Jira
+#define jiracmd                         SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh")
+#define jirasearchcmd                   SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh --search")
+#define jiraallcmd                      SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh --all")
+
 static const Key keys[] = {
 	/* modifier                     key                       function        argument */
-	{ MODKEY,                       XK_p,                     spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_d,                     spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_g,                     spawn,          {.v = dmenudesktopcmd } },
 	{ MODKEY,                       XK_o,                     spawn,          {.v = dmenufilecmd } },
 	{ MODKEY|ShiftMask,             XK_o,                     spawn,          {.v = dmenuhiddenfilecmd } },
@@ -148,6 +156,10 @@ static const Key keys[] = {
 	{ ShiftMask,                    XK_Print,                 spawn,          screenshotselectcmd },
 	{ ControlMask,                  XK_Print,                 spawn,          screenshotclipboardcmd },
 	{ ControlMask|ShiftMask,        XK_Print,                 spawn,          screenshotselectsclipboardcmd },
+	{ MODKEY,                       XK_c,                     spawn,          {.v = calcmd } },
+	{ MODKEY,                       XK_p,                     spawn,          jiracmd },
+	{ MODKEY|ShiftMask,             XK_p,                     spawn,          jirasearchcmd },
+	{ MODKEY|ControlMask,           XK_p,                     spawn,          jiraallcmd },
 	{ MODKEY,                       XK_b,                     togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_w,											tabmode,        {-1} },
 	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
