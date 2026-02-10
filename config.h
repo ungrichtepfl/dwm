@@ -126,6 +126,10 @@ static const char *dimmercmd[]            = { "brightnessctl", "set", "5%-", NUL
 static const char* calcmd[]           = { "cal-notify.sh", NULL };
 static const char* calweekcmd[]       = { "cal-notify.sh", "week", NULL };
 
+// Train
+static const char* traincmd[]           = { "train-notify.sh", NULL };
+static const char* trainbackcmd[]       = { "train-notify.sh", "back", NULL };
+
 // Jira
 #define jiracmd                         SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh")
 #define jirasearchcmd                   SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh --search")
@@ -159,6 +163,8 @@ static const Key keys[] = {
 	{ ControlMask|ShiftMask,        XK_Print,                 spawn,          screenshotselectsclipboardcmd },
 	{ MODKEY,                       XK_c,                     spawn,          {.v = calcmd } },
 	{ MODKEY|ShiftMask,             XK_c,                     spawn,          {.v = calweekcmd } },
+	{ MODKEY,                       XK_v,                     spawn,          {.v = trainbackcmd } },
+	{ MODKEY|ShiftMask,             XK_v,                     spawn,          {.v = traincmd } },
 	{ MODKEY,                       XK_p,                     spawn,          jiracmd },
 	{ MODKEY|ShiftMask,             XK_p,                     spawn,          jirasearchcmd },
 	{ MODKEY|ControlMask,           XK_p,                     spawn,          jiraallcmd },
