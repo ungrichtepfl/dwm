@@ -109,7 +109,7 @@ static const char *closenotificationcmd[] = { "dunstctl", "close-all", NULL };
 #define            upvolumecmd              PACTL("set-sink-volume", "+5%")
 #define            downvolumecmd            PACTL("set-sink-volume", "-5%")
 #define            mutevolumecmd            PACTL("set-sink-mute", "toggle")
-static const char *mutemiccmd[]           = { "pactl", "set-sink-mute",   "@DEFAULT_SOURCE@", "toggle", NULL };
+#define            mutemiccmd               SHCMD("pactl set-source-mute @DEFAULT_SOURCE@ toggle; pkill -RTMIN+5 $STATUSBAR")
 
 static const char *brightercmd[]          = { "brightnessctl", "set", "5%+", NULL };
 static const char *dimmercmd[]            = { "brightnessctl", "set", "5%-", NULL };
@@ -151,10 +151,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_n,                     spawn,          {.v = popnotificationcmd } },
 	{ MODKEY|ShiftMask,             XK_n,                     spawn,          {.v = closenotificationcmd } },
 	{ MODKEY,                       XK_Escape,                spawn,          {.v = lockcmd } },
-  { 0,                            XF86XK_AudioMute,         spawn,          mutevolumecmd  },
-  { 0,                            XF86XK_AudioMicMute,      spawn,          {.v = mutemiccmd } },
-  { 0,                            XF86XK_AudioLowerVolume,  spawn,          downvolumecmd  },
-	{ 0,                            XF86XK_AudioRaiseVolume,  spawn,          upvolumecmd  },
+  { 0,                            XF86XK_AudioMute,         spawn,          mutevolumecmd },
+  { 0,                            XF86XK_AudioMicMute,      spawn,          mutemiccmd },
+  { 0,                            XF86XK_AudioLowerVolume,  spawn,          downvolumecmd },
+	{ 0,                            XF86XK_AudioRaiseVolume,  spawn,          upvolumecmd },
   { 0,                            XF86XK_MonBrightnessDown, spawn,          {.v = dimmercmd } },
   { 0,                            XF86XK_MonBrightnessUp,   spawn,          {.v = brightercmd } },
 	{ 0,                            XK_Print,                 spawn,          screenshotcmd },
