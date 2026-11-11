@@ -18,6 +18,9 @@ battery-popup.sh -L 15 -n -s ~/mydotfiles/battery-popup.wav -v 75 &
 # Start gcalcli reminding
 gcalcli-reminder.sh &
 
+# Start notifications for failed GitHub pipelines
+github-pipeline-check.sh --daemon &
+
 # Start mail syncing
 "$HOME"/.config/neomutt/mailsync.sh &
 
