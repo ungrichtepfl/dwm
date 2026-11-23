@@ -1404,6 +1404,16 @@ isuniquegeom(XineramaScreenInfo *unique, size_t n, XineramaScreenInfo *info)
 			return 0;
 	return 1;
 }
+
+static int
+compare_screens_left_to_right(const void *a, const void *b)
+{
+	const XineramaScreenInfo *sa = a, *sb = b;
+
+	if (sa->x_org != sb->x_org)
+		return sa->x_org - sb->x_org;
+	return sa->y_org - sb->y_org;
+}
 #endif /* XINERAMA */
 
 void
@@ -2493,6 +2503,8 @@ updategeom(void)
 				memcpy(&unique[j++], &info[i], sizeof(XineramaScreenInfo));
 		XFree(info);
 		nn = j;
+		/* Xinerama reports screens in RandR output order, not by position */
+		qsort(unique, nn, sizeof(XineramaScreenInfo), compare_screens_left_to_right);
 
 		/* new monitors if nn > n */
 		for (i = n; i < nn; i++) {
