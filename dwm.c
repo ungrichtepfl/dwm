@@ -2192,16 +2192,45 @@ sigstatusbar(const Arg *arg)
 	sigqueue(statuspid, SIGRTMIN+statussig, sv);
 }
 
+/* dmenu -m counts the screens in Xinerama order, which is not the sorted
+ * order of the monitors in dwm */
+static int
+xinerama_screen_index_under_pointer(void)
+{
+	int screen = 0;
+#ifdef XINERAMA
+	int i, n, x, y;
+	XineramaScreenInfo *info;
+
+	if (!getrootptr(&x, &y)) {
+		fprintf(stderr, "dwm: pointer is not on the root window, dmenu uses screen 0\n");
+		return 0;
+	}
+	if (!(info = XineramaQueryScreens(dpy, &n)))
+		return 0;
+	for (i = 0; i < n; i++)
+		if (x >= info[i].x_org && x < info[i].x_org + info[i].width
+		&& y >= info[i].y_org && y < info[i].y_org + info[i].height) {
+			screen = i;
+			break;
+		}
+	if (i == n)
+		fprintf(stderr, "dwm: pointer %d,%d is on no screen, dmenu uses screen 0\n", x, y);
+	XFree(info);
+#endif /* XINERAMA */
+	return screen;
+}
+
 void
 spawn(const Arg *arg)
 {
 	struct sigaction sa;
 
-	if (arg->v == dmenucmd 
-	 || arg->v == dmenudesktopcmd 
-	 || arg->v == dmenufilecmd 
+	if (arg->v == dmenucmd
+	 || arg->v == dmenudesktopcmd
+	 || arg->v == dmenufilecmd
 	 || arg->v == dmenuhiddenfilecmd)
-		dmenumon[0] = '0' + selmon->num;
+		dmenumon[0] = '0' + xinerama_screen_index_under_pointer();
 	if (fork() == 0) {
 		if (dpy)
 			close(ConnectionNumber(dpy));
