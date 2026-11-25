@@ -135,6 +135,8 @@ static const char* trainbackcmd[]       = { "train-notify.sh", "back", NULL };
 #define jirasearchcmd                   SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh --search")
 #define jiraallcmd                      SHCMD("sensible-terminal.sh -e $HOME/.config/jira/jira.sh --all")
 
+#define togglekeyboardcmd               SHCMD("pkill -xf svkbd-mobile-intl || svkbd-mobile-intl")
+
 static const Key keys[] = {
 	/* modifier                     key                       function        argument */
 	{ MODKEY,                       XK_d,                     spawn,          {.v = dmenucmd } },
@@ -172,6 +174,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_w,											tabmode,        {-1} },
 	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_k,                     spawn,          togglekeyboardcmd },
 	{ MODKEY|ShiftMask,             XK_i,                     incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_d,                     incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,                     setmfact,       {.f = -0.05} },
