@@ -20,7 +20,7 @@ static const int showtab			           = showtab_auto;        /* Default tab bar 
 static const int toptab				           = 1;                   /* 0 means bottom tab bar */
 
 static const char default_font[]    = "FontAwesomeNerdFont-12";
-static const char *fonts[]          = { default_font, "monospace:size=12" };
+static const char *fonts[]          = { default_font, "Symbols Nerd Font:size=12", "monospace:size=12" };
 #define					  dmenufont           default_font
 
 static const char col_gray1[]       = "#222222";
