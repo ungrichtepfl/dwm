@@ -24,6 +24,9 @@ github-pipeline-check.sh --daemon &
 # Start mail syncing
 "$HOME"/.config/neomutt/mailsync.sh &
 
+# Mount Google Drive folders (does nothing if rclone is not set up)
+gdrive-mount.sh &
+
 export STATUSBAR=dwmblocks
 dwmblocks &
 
