@@ -476,7 +476,8 @@ attachstack(Client *c)
 void
 buttonpress(XEvent *e)
 {
-	unsigned int i, x, click;
+	unsigned int i, click;
+	int x;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -490,7 +491,9 @@ buttonpress(XEvent *e)
 		focus(NULL);
 	}
 	if (ev->window == selmon->barwin) {
-		unsigned int stw;
+		/* x and stw are int, not unsigned: the status start below can be
+		 * negative when the status text is wider than the bar */
+		int stw;
     unsigned int occ;
 
 		stw = getsystraywidth();
@@ -508,7 +511,7 @@ buttonpress(XEvent *e)
 		if (i < LENGTH(tags)) {
 			click = ClkTagBar;
 			arg.ui = 1 << i;
-		} else if (ev->x < x + TEXTW(selmon->ltsymbol))
+		} else if (ev->x < x + (int)TEXTW(selmon->ltsymbol))
 			click = ClkLtSymbol;
 		else if (ev->x > selmon->ww - statusw - stw) {
 			x = selmon->ww - statusw - stw;
